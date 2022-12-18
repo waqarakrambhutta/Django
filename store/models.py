@@ -1,5 +1,11 @@
 from django.db import models
 
+class Promotion(models.Model):
+    description=models.CharField(max_length=255)
+    discount=models.FloatField()
+
+
+
 class Collection(models.Model):
     title=models.CharField(max_length=255)
 
@@ -10,6 +16,7 @@ class Product(models.Model):
     inventory=models.IntegerField()
     last_update=models.DateTimeField(auto_now=True)
     collection=models.ForeignKey(Collection,on_delete=models.PROTECT)
+    promotions=models.ManyToManyField(Promotion)
 
 class Customer(models.Model):
     MEMBERSHIP_BROMZE='B'
@@ -41,7 +48,7 @@ class Order(models.Model):
     placed_at=models.DateTimeField(auto_now_add=True)
     payment_status=models.CharField(max_length=1, choices=payment_choice,default=pending_payment)
     order=models.ForeignKey(Customer,on_delete=models.CASCADE)
-    items=models.ForeignKey('OrderItems', on_delete=models.CASCADE)
+    items=models.ForeignKey('order_items', on_delete=models.CASCADE,related_name='+')
 
 class Address(models.Model):
     street=models.CharField(max_length=255)
@@ -50,17 +57,17 @@ class Address(models.Model):
     #cascade means that when we delete the address the whole record will be deleted.
 
 
-class OrderItems(models.Model):
+class order_items(models.Model):
     order=models.ForeignKey(Order,on_delete=models.PROTECT)
     price=models.ForeignKey(Product,on_delete=models.PROTECT)
     quantity=models.PositiveSmallIntegerField()
-    unit_price=models.DecimalField(max_length=6,decimal_places=3)
+    unit_price=models.DecimalField(max_digits=6, max_length=6,decimal_places=3)
 
 
 class Cart(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
 
-class CartItems(models.model):
+class CartItems(models.Model):
     cart=models.ForeignKey(Cart,on_delete=models.CASCADE)
     product=models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity=models.PositiveSmallIntegerField()
