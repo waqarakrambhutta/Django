@@ -35,12 +35,6 @@ class Customer(models.Model):
     birth_date=models.DateField(null=True)
     membership=models.CharField(max_length=1,choices=membership_choice,default=MEMBERSHIP_BROMZE)
     
-    class Meta:
-        db_table='store_customers'
-        indexes=[
-            models.Index(fields=['last_name','first_name'])
-            #indexes are used to speed up the queries.
-        ]
 
 title=models.CharField(max_length=255)
 
